@@ -7,7 +7,7 @@
     "dev": "npm run stop:ports && npx concurrently -k -n client,server -c blue,green \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
     "dev:server": "npm --prefix server run dev",
-    "build": "vite build",
+    "build": "chmod +x node_modules/.bin/vite && vite build",
     "preview": "vite preview",
     "start": "npm --prefix server start"
   },
