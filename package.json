@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "stop:ports": "npx kill-port 3001 5173 >nul 2>&1 || exit 0",
-    "dev": "npm run stop:ports && npx concurrently -k -n client,server -c blue,green \"npm run dev:client\" \"npm run dev:server\"",
+  
     "dev:client": "vite",
     "dev:server": "npm --prefix server run dev",
-    "build": "node node_modules/vite/bin/vite.js build",
+   
     "preview": "vite preview",
-    "start": "npm --prefix server start"
-  },
+    "start": "npm --prefix server start",
+    "dev": "vite",
+    "build": "vite build"
+   
+},
   "dependencies": {
     "@supabase/supabase-js": "^2.42.0",
     "@tanstack/react-query": "^5.0.0",
@@ -37,6 +40,9 @@
     "nodemon": "^3.1.14",
     "postcss": "^8.5.8",
     "tailwindcss": "^3.4.19",
-    "vite": "^5.4.0"
-  }
+    "vite": "^latest"
+  },
+  "engines": {
+  "node": "18.x"
+}
 }
