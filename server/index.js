@@ -71,3 +71,6 @@ function startServer(port) {
 }
 
 startServer(Number(PORT));
+
+// Export the Express app as a serverless function for Vercel
+module.exports = app;
