@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Environment variables (SECURITY RISK IF PUSHED)
+.env
+.env.*
+
+# Build output
+dist/
+dist-ssr/
