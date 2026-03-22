@@ -1,0 +1,72 @@
+-- REQUIREMENTS:
+-- 1. Teachers authenticate via Supabase Auth (no custom auth table needed)
+-- 2. Each teacher manages their own students (row-level security)
+-- 3. Remaining fees are NEVER stored — always computed as total_fees - SUM(payments)
+-- 4. Support multiple standards (1st to 12th)
+-- 5. Support payment installments with date and notes
+
+-- TABLE 1: standards
+CREATE TABLE standards (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,              -- e.g., "5th Standard"
+  display_order INT NOT NULL,      -- for sorting 1-12
+  teacher_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- TABLE 2: students
+CREATE TABLE students (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  teacher_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  standard_id uuid REFERENCES standards(id) ON DELETE SET NULL,
+  full_name TEXT NOT NULL,
+  total_fees NUMERIC(10,2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- TABLE 3: payments
+CREATE TABLE payments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  student_id uuid REFERENCES students(id) ON DELETE CASCADE NOT NULL,
+  teacher_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  amount NUMERIC(10,2) NOT NULL CHECK (amount > 0),
+  payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  note TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- VIEW: student_fee_summary (computed remaining fees)
+CREATE OR REPLACE VIEW student_fee_summary AS
+SELECT
+  s.id,
+  s.teacher_id,
+  s.standard_id,
+  s.full_name,
+  s.total_fees,
+  COALESCE(SUM(p.amount), 0) AS paid_amount,
+  s.total_fees - COALESCE(SUM(p.amount), 0) AS remaining_amount
+FROM students s
+LEFT JOIN payments p ON p.student_id = s.id
+GROUP BY s.id;
+
+-- ROW LEVEL SECURITY: enable on all tables
+ALTER TABLE standards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+
+-- RLS POLICIES: teachers can only see/edit their own data
+CREATE POLICY "teachers_own_standards" ON standards
+  FOR ALL USING (auth.uid() = teacher_id);
+
+CREATE POLICY "teachers_own_students" ON students
+  FOR ALL USING (auth.uid() = teacher_id);
+
+CREATE POLICY "teachers_own_payments" ON payments
+  FOR ALL USING (auth.uid() = teacher_id);
+
+-- INDEXES for performance
+CREATE INDEX idx_students_teacher ON students(teacher_id);
+CREATE INDEX idx_students_standard ON students(standard_id);
+CREATE INDEX idx_payments_student ON payments(student_id);
+CREATE INDEX idx_payments_teacher ON payments(teacher_id);

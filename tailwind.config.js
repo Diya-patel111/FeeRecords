@@ -1,0 +1,73 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'fees-green': '#16a34a',
+        'fees-amber': '#d97706',
+        'fees-red': '#dc2626',
+        "error-container": "#ffdad6",
+        "on-error-container": "#93000a",
+        "surface": "#f7f9fb",
+        "on-tertiary": "#ffffff",
+        "surface-tint": "#2f53ce",
+        "surface-container": "#eceef0",
+        "secondary": "#515f74",
+        "tertiary": "#6c1e00",
+        "surface-container-lowest": "#ffffff",
+        "outline": "#747685",
+        "on-tertiary-fixed": "#390c00",
+        "tertiary-container": "#932c00",
+        "on-error": "#ffffff",
+        "surface-container-low": "#f2f4f6",
+        "error": "#ba1a1a",
+        "background": "#f7f9fb",
+        "on-secondary-fixed": "#0d1c2e",
+        "tertiary-fixed": "#ffdbd0",
+        "surface-container-highest": "#e0e3e5",
+        "on-primary-fixed-variant": "#0438b6",
+        "primary": "#002c98",
+        "surface-container-high": "#e6e8ea",
+        "on-primary": "#ffffff",
+        "surface-bright": "#f7f9fb",
+        "on-primary-container": "#b2bfff",
+        "inverse-primary": "#b7c4ff",
+        "secondary-fixed": "#d5e3fc",
+        "on-primary-fixed": "#001453",
+        "primary-fixed-dim": "#b7c4ff",
+        "outline-variant": "#c4c5d6",
+        "inverse-surface": "#2d3133",
+        "on-secondary-container": "#57657a",
+        "on-background": "#191c1e",
+        "on-surface-variant": "#444654",
+        "surface-dim": "#d8dadc",
+        "secondary-fixed-dim": "#b9c7df",
+        "primary-fixed": "#dde1ff",
+        "tertiary-fixed-dim": "#ffb59d",
+        "on-tertiary-container": "#ffaf95",
+        "on-surface": "#191c1e",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#3a485b",
+        "surface-variant": "#e0e3e5",
+        "on-tertiary-fixed-variant": "#832600",
+        "secondary-container": "#d5e3fc",
+        "inverse-on-surface": "#eff1f3",
+        "primary-container": "#1a43bf"
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        headline: ["Inter"],
+        body: ["Inter"],
+        label: ["Inter"]
+      },
+      borderRadius: {
+        "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"
+      }
+    },
+  },
+  plugins: [],
+}
