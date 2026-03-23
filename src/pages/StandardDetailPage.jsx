@@ -6,6 +6,20 @@ import AddStudentModal from '../components/AddStudentModal';
 import { useStudentsByStandard } from '../hooks/useStudents';
 import { useStandard } from '../hooks/useStandards';
 
+const getStdChipLabel = (standard) => {
+  const name = String(standard?.name || '').trim();
+  const match = name.match(/\d+/);
+  const displayOrder = Number(standard?.display_order);
+
+  if (match?.[0]) return `STD ${match[0]}`;
+  if (!Number.isNaN(displayOrder) && displayOrder > 0) return `STD ${displayOrder}`;
+  if (!name) return 'STD';
+
+  return name.length > 12 ? name.slice(0, 12).toUpperCase() : name.toUpperCase();
+};
+
+const formatInr = (value) => `Rs ${Number(value || 0).toLocaleString('en-IN')}`;
+
 export default function StandardDetailPage() {
   const { standardId } = useParams();
   const { data: standard, isLoading: isStandardLoading } = useStandard(standardId);
@@ -16,60 +30,86 @@ export default function StandardDetailPage() {
     return <div className="p-8">Loading class details...</div>;
   }
 
-  const totalTarget = students?.reduce((sum, s) => sum + Number(s.total_fees), 0) || 0;
-  const totalCollected = students?.reduce((sum, s) => sum + Number(s.paid_amount), 0) || 0;
+  const totalTarget = students?.reduce((sum, student) => sum + Number(student.total_fees), 0) || 0;
+  const totalCollected = students?.reduce((sum, student) => sum + Number(student.paid_amount), 0) || 0;
   const collectionProgress = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
+  const fullyPaidCount = students?.filter((student) => Number(student.remaining_amount) <= 0).length || 0;
+  const pendingCount = (students?.length || 0) - fullyPaidCount;
 
   return (
     <div className="min-h-screen bg-surface flex flex-col font-body">
-      <Topnav title="FeeTrack Admin" />
-      
-      <main className="flex-1 p-4 sm:p-6 lg:p-10 w-full text-on-surface">
-        <div className="mb-6">
-          <Link 
-            to="/dashboard" 
-            className="inline-flex items-center gap-2 px-5 py-2.5 editorial-gradient text-white hover:opacity-90 hover:shadow-lg text-sm font-bold tracking-widest uppercase rounded-lg transition-all shadow-md active:scale-95"
-          >
-            <span className="material-symbols-outlined text-sm">arrow_back</span>
-            Back to Dashboard
-          </Link>
-        </div>
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-headline font-extrabold tracking-tight text-on-surface">{standard?.name}</h2>
+      <Topnav title="Standard Workspace" />
+
+      <main className="flex-1 p-4 sm:p-6 lg:p-10 w-full text-on-surface max-w-7xl mx-auto">
+        <section className="elevated-card rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-primary/10 blur-3xl"></div>
+            <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-primary/10 blur-3xl"></div>
           </div>
-          
-          <button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="fixed bottom-6 right-6 sm:static sm:bottom-auto sm:right-auto z-50 px-6 py-4 sm:py-3 editorial-gradient text-white font-bold tracking-widest text-sm uppercase rounded-full sm:rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:opacity-90 transition-all active:scale-95"
-          >
-            <span className="material-symbols-outlined text-2xl sm:text-lg">add</span>
-            <span className="hidden sm:inline">Add Student</span>
-          </button>
-        </div>
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant/30 text-on-surface rounded-xl hover:border-primary/40 hover:text-primary transition-all text-xs font-extrabold tracking-[0.15em] uppercase mb-5"
+              >
+                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                Back to Dashboard
+              </Link>
+
+              <div className="mb-3">
+                <span className="std-chip">{getStdChipLabel(standard)}</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-headline font-extrabold tracking-tight text-on-surface">
+                {standard?.name}
+              </h2>
+              <p className="text-sm text-on-surface-variant font-semibold mt-2">
+                {students?.length || 0} students actively tracked in this standard.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="fixed bottom-6 right-6 sm:static sm:bottom-auto sm:right-auto z-50 px-6 py-4 sm:py-3 editorial-gradient text-white font-bold tracking-[0.14em] text-sm uppercase rounded-full sm:rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:opacity-90 transition-all active:scale-95"
+            >
+              <span className="material-symbols-outlined text-2xl sm:text-lg">add</span>
+              <span className="hidden sm:inline">Add Student</span>
+            </button>
+          </div>
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
-          <div className="lg:col-span-3 bg-surface-container-lowest p-8 rounded-xl outline outline-1 outline-outline-variant shadow-sm">
+          <div className="lg:col-span-3 elevated-card p-8 rounded-3xl">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-headline text-on-surface">Student Records</h3>
-              <div className="text-sm font-medium text-on-surface-variant bg-surface-container-low px-4 py-2 rounded-lg">
-                Total: {students?.length || 0}
+              <h3 className="text-xl font-headline text-on-surface font-bold">Student Records</h3>
+              <div className="text-xs font-extrabold tracking-[0.14em] text-on-surface-variant bg-surface-container-low px-4 py-2 rounded-xl uppercase">
+                Total {students?.length || 0}
               </div>
             </div>
-            
+
             <div className="overflow-x-auto -mx-6 sm:mx-0 px-6 sm:px-0 pb-4">
-              <table className="w-full text-left border-collapse min-w-[800px] whitespace-nowrap">
+              <table className="w-full text-left border-collapse min-w-[920px] whitespace-nowrap">
                 <thead>
                   <tr>
-                    <th className="pb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant">Student Name</th>
-                    <th className="pb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant">Total Fee</th>
-                    <th className="pb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant">Paid</th>
-                    <th className="pb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant border-b border-outline-variant">Remaining</th>
-                    <th className="pb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant text-right border-b border-outline-variant">Action</th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
+                      Student Name
+                    </th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
+                      Total Fee
+                    </th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
+                      Paid
+                    </th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
+                      Remaining
+                    </th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant text-right border-b border-outline-variant/60">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {students?.map(student => (
+                  {students?.map((student) => (
                     <StudentRow key={student.id} student={student} />
                   ))}
                   {students?.length === 0 && (
@@ -85,51 +125,47 @@ export default function StandardDetailPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="editorial-gradient p-8 rounded-xl text-inverse-on-surface shadow-xl relative overflow-hidden">
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-              <h4 className="text-xs uppercase tracking-widest font-headline opacity-80 mb-4">Class Collection</h4>
-              <div className="text-3xl font-headline mb-1">₹{totalCollected.toLocaleString('en-IN')}</div>
-              <p className="text-xs opacity-70">Total Fees Collected</p>
-              
+            <div className="editorial-gradient p-8 rounded-3xl text-inverse-on-surface shadow-xl relative overflow-hidden">
+              <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/15 rounded-full blur-3xl"></div>
+              <h4 className="text-xs uppercase tracking-[0.16em] font-extrabold opacity-80 mb-4">Class Collection</h4>
+              <div className="text-3xl font-headline font-extrabold mb-1">{formatInr(totalCollected)}</div>
+              <p className="text-xs opacity-75">Total Fees Collected</p>
+
               <div className="mt-6 pt-6 border-t border-white/20">
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm font-semibold">
                   <span>Target</span>
-                  <span className="font-bold">₹{totalTarget.toLocaleString('en-IN')}</span>
+                  <span>{formatInr(totalTarget)}</span>
                 </div>
-                <div className="w-full h-1.5 bg-white/20 rounded-full mt-2 overflow-hidden">
+                <div className="w-full h-2 bg-white/20 rounded-full mt-2 overflow-hidden">
                   <div className="h-full bg-white transition-all duration-500" style={{ width: `${collectionProgress || 0}%` }}></div>
                 </div>
               </div>
             </div>
-            
-            <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm outline outline-1 outline-outline-variant">
-              <h4 className="text-sm font-headline text-on-surface mb-6 flex items-center gap-2">
+
+            <div className="elevated-card p-8 rounded-3xl">
+              <h4 className="text-sm font-headline text-on-surface mb-6 flex items-center gap-2 font-bold">
                 <span className="material-symbols-outlined text-primary text-base">analytics</span>
                 Stats
               </h4>
-               <div className="space-y-4">
-                 <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-lg">
-                   <span className="text-xs text-on-surface-variant font-bold uppercase">Fully Paid</span>
-                   <span className="text-sm font-bold text-primary">
-                     {students?.filter(s => s.status === 'PAID').length || 0}
-                   </span>
-                 </div>
-                 <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-lg">
-                   <span className="text-xs text-on-surface-variant font-bold uppercase">Pending</span>
-                   <span className="text-sm font-bold text-error">
-                     {students?.filter(s => s.status !== 'PAID').length || 0}
-                   </span>
-                 </div>
-               </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl">
+                  <span className="text-xs text-on-surface-variant font-extrabold uppercase tracking-[0.14em]">Fully Paid</span>
+                  <span className="text-sm font-extrabold text-primary">{fullyPaidCount}</span>
+                </div>
+                <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl">
+                  <span className="text-xs text-on-surface-variant font-extrabold uppercase tracking-[0.14em]">Pending</span>
+                  <span className="text-sm font-extrabold text-error">{pendingCount}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </main>
 
       {isAddModalOpen && (
-        <AddStudentModal 
-          standardId={standardId} 
-          onClose={() => setIsAddModalOpen(false)} 
+        <AddStudentModal
+          standardId={standardId}
+          onClose={() => setIsAddModalOpen(false)}
         />
       )}
     </div>

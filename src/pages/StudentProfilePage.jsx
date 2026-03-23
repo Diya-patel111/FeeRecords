@@ -56,7 +56,7 @@ export default function StudentProfilePage() {
                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 editorial-gradient text-white rounded-xl font-bold text-sm tracking-widest uppercase hover:opacity-90 shadow-md hover:shadow-lg transition-all active:scale-95"
              >
                 <span className="material-symbols-outlined text-lg">add_card</span>
-                Record Fee
+                Record Fees
             </button>
           </div>
         </div>

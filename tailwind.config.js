@@ -59,10 +59,10 @@ module.exports = {
         "primary-container": "#1a43bf"
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        headline: ["Inter"],
-        body: ["Inter"],
-        label: ["Inter"]
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        headline: ['Sora', 'Manrope', 'system-ui', 'sans-serif'],
+        body: ['Manrope', 'system-ui', 'sans-serif'],
+        label: ['Manrope', 'system-ui', 'sans-serif']
       },
       borderRadius: {
         "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"

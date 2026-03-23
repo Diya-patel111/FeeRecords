@@ -12,24 +12,31 @@ export default function Topnav({ title }) {
   };
 
   return (
-    <header className="w-full sticky top-0 z-40 bg-surface-container-lowest/80 backdrop-blur-xl flex items-center justify-between px-6 md:px-10 py-5 border-b border-outline-variant/20 shadow-sm shadow-on-surface/5">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl editorial-gradient flex items-center justify-center shadow-md shadow-primary/20 text-white">
+    <header className="w-full sticky top-0 z-40 frost-panel flex items-center justify-between px-5 md:px-10 py-4 border-b border-white/50">
+      <div className="flex items-center gap-3 md:gap-4">
+        <div className="w-11 h-11 rounded-2xl editorial-gradient flex items-center justify-center text-white shadow-lg shadow-primary/20">
           <span className="material-symbols-outlined font-light text-[22px]">menu_book</span>
         </div>
-        <h1 className="text-2xl font-headline font-extrabold tracking-tight text-on-surface">
-          Hisab<span className="text-primary">Kitab</span>
-        </h1>
+        <div>
+          <h1 className="text-2xl md:text-[1.75rem] font-headline font-extrabold tracking-tight text-on-surface">
+            Hisab<span className="text-primary">Kitab</span>
+          </h1>
+          <p className="text-[10px] md:text-[11px] text-on-surface-variant font-bold tracking-[0.18em] uppercase -mt-0.5">
+            {title || 'Fee Operations Console'}
+          </p>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <button 
+      <div className="flex items-center gap-3">
+        <button
           onClick={handleLogout}
-          className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-surface-container-low hover:bg-surface-container-high transition-all active:scale-95 text-on-surface-variant hover:text-primary border border-outline-variant/10 shadow-sm"
+          className="group flex items-center gap-2 p-1.5 pr-3 md:pr-4 rounded-full bg-white/90 hover:bg-white transition-all active:scale-95 text-on-surface-variant border border-outline-variant/25 shadow-sm"
         >
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-headline font-extrabold text-sm shadow-inner overflow-hidden">
+          <div className="w-9 h-9 rounded-full editorial-gradient flex items-center justify-center text-white font-headline font-extrabold text-sm shadow-inner overflow-hidden">
             {user?.email?.charAt(0).toUpperCase() || 'A'}
           </div>
-          <span className="text-xs tracking-widest font-bold uppercase hidden sm:block">Sign Out</span>
+          <span className="text-[11px] tracking-[0.18em] font-extrabold uppercase hidden sm:block group-hover:text-primary transition-colors">
+            Sign Out
+          </span>
         </button>
       </div>
     </header>
