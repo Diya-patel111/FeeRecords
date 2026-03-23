@@ -62,18 +62,18 @@ export default function AddStudentModal({ standardId, onClose }) {
             />
           </div>
 
-          <div className="pt-4 flex items-center justify-end gap-3">
+          <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
              <button 
               type="button"
               onClick={onClose}
-              className="px-5 py-2 hover:bg-surface-container-highest text-on-surface-variant font-bold text-sm rounded-lg transition-colors border border-outline-variant"
+              className="w-full sm:w-auto px-5 py-2 hover:bg-surface-container-highest text-on-surface-variant font-bold text-sm rounded-lg transition-colors border border-outline-variant"
             >
               Cancel
             </button>
             <button 
               type="submit"
               disabled={isPending}
-              className="editorial-gradient text-white px-5 py-2.5 rounded-lg font-bold text-sm tracking-widest uppercase shadow-md hover:shadow-lg hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+              className="w-full sm:w-auto editorial-gradient text-white px-5 py-2.5 rounded-lg font-bold text-sm tracking-widest uppercase shadow-md hover:shadow-lg hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
             >
               {isPending ? 'Saving...' : 'Save Student'}
             </button>

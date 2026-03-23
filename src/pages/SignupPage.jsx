@@ -49,8 +49,8 @@ export default function SignupPage() {
 
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
-      <main className="flex-grow flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[1100px] grid md:grid-cols-2 bg-surface-container-lowest overflow-hidden rounded-xl shadow-2xl shadow-on-surface/5">
+      <main className="flex-grow flex items-center justify-center px-4 py-6 sm:py-12">
+        <div className="w-full max-w-[1100px] grid md:grid-cols-2 bg-surface-container-lowest overflow-hidden rounded-2xl shadow-2xl shadow-on-surface/5">
           <div className="hidden md:flex flex-col justify-between p-12 editorial-gradient text-white relative overflow-hidden">
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-10 mt-2">
@@ -77,10 +77,10 @@ export default function SignupPage() {
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-container/20 rounded-full -ml-48 -mb-48 blur-3xl"></div>
           </div>
           
-          <div className="p-8 md:p-16 flex flex-col justify-center bg-surface-container-lowest">
+          <div className="p-6 sm:p-8 md:p-16 flex flex-col justify-center bg-surface-container-lowest">
             <div className="max-w-md mx-auto w-full">
               <div className="mb-10">
-                <h1 className="text-3xl font-headline font-extrabold text-on-surface tracking-tight mb-2">Create Account</h1>
+                <h1 className="text-2xl sm:text-3xl font-headline font-extrabold text-on-surface tracking-tight mb-2">Create Account</h1>
               </div>
 
               <form onSubmit={handleSignup} className="space-y-6">
@@ -167,14 +167,14 @@ export default function SignupPage() {
         </div>
       </main>
 
-      <footer className="w-full border-t border-slate-200/20 dark:border-slate-800/20 bg-slate-50 dark:bg-slate-950">
-        <div className="flex flex-col md:flex-row justify-between items-center px-8 py-12 space-y-4 md:space-y-0 max-w-7xl mx-auto">
-          <p className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-600">© 2024 HisabKitab. The Academic Curator.</p>
-          <div className="flex space-x-8">
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Terms of Service</a>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Institutional Support</a>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-400 dark:text-slate-600 hover:text-blue-600 dark:hover:text-blue-400 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Contact Support</a>
+      <footer className="w-full border-t border-slate-200/20 bg-slate-50">
+        <div className="flex flex-col md:flex-row justify-between items-center px-4 sm:px-8 py-8 sm:py-12 gap-4 max-w-7xl mx-auto">
+          <p className="text-[11px] text-center font-medium uppercase tracking-widest text-slate-400">© 2024 HisabKitab. The Academic Curator.</p>
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-8">
+            <a className="text-[11px] font-medium uppercase tracking-widest text-slate-400 hover:text-blue-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+            <a className="text-[11px] font-medium uppercase tracking-widest text-slate-400 hover:text-blue-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+            <a className="text-[11px] font-medium uppercase tracking-widest text-slate-400 hover:text-blue-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Institutional Support</a>
+            <a className="text-[11px] font-medium uppercase tracking-widest text-slate-400 hover:text-blue-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Contact Support</a>
           </div>
         </div>
       </footer>

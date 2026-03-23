@@ -23,18 +23,7 @@ export default function StudentRow({ student }) {
             <span className="font-semibold text-on-surface">{student.full_name}</span>
           </div>
         </td>
-        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface font-semibold border-b border-outline-variant/60 transition-colors">
-          Rs {Number(student.total_fees).toLocaleString('en-IN')}
-        </td>
-        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
-          Rs {Number(student.paid_amount).toLocaleString('en-IN')}
-        </td>
-        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
-          <span className={`font-semibold ${remainingAmount > 0 ? 'text-error' : 'text-primary'}`}>
-            Rs {remainingAmount.toLocaleString('en-IN')}
-          </span>
-        </td>
-        <td className="py-4 px-4 last:rounded-r-2xl bg-surface-container-lowest group-hover:bg-white text-right border-b border-outline-variant/60 transition-colors">
+        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-left border-b border-outline-variant/60 transition-colors">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -45,6 +34,17 @@ export default function StudentRow({ student }) {
             <span className="material-symbols-outlined text-[16px]">add_card</span>
             Record Fees
           </button>
+        </td>
+        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+          <span className={`font-semibold ${remainingAmount > 0 ? 'text-error' : 'text-primary'}`}>
+            Rs {remainingAmount.toLocaleString('en-IN')}
+          </span>
+        </td>
+        <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+          Rs {Number(student.paid_amount).toLocaleString('en-IN')}
+        </td>
+        <td className="py-4 px-4 last:rounded-r-2xl bg-surface-container-lowest group-hover:bg-white text-on-surface font-semibold border-b border-outline-variant/60 transition-colors">
+          Rs {Number(student.total_fees).toLocaleString('en-IN')}
         </td>
       </tr>
 

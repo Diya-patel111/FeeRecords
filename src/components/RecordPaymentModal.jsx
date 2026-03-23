@@ -48,7 +48,7 @@ export default function RecordPaymentModal({ student, onClose }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1">
-          <div className="bg-surface-container-low p-4 rounded-lg mb-6 flex justify-between items-center border border-outline-variant">
+          <div className="bg-surface-container-low p-4 rounded-lg mb-6 flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center border border-outline-variant">
             <div>
               <p className="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Current Due</p>
               <p className="text-lg font-bold text-on-surface">₹{currentRemaining.toLocaleString('en-IN')}</p>
@@ -105,11 +105,11 @@ export default function RecordPaymentModal({ student, onClose }) {
           </div>
         </form>
 
-        <div className="px-6 py-4 bg-surface-container border-t border-outline-variant flex items-center justify-end gap-3 rounded-b-xl">
+        <div className="px-6 py-4 bg-surface-container border-t border-outline-variant flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 rounded-b-xl">
           <button 
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 text-on-surface-variant font-bold text-sm hover:bg-surface-container-highest rounded-lg transition-colors border border-outline-variant"
+            className="w-full sm:w-auto px-5 py-2.5 text-on-surface-variant font-bold text-sm hover:bg-surface-container-highest rounded-lg transition-colors border border-outline-variant"
           >
             Cancel
           </button>
@@ -117,7 +117,7 @@ export default function RecordPaymentModal({ student, onClose }) {
             type="button"
             onClick={handleSubmit}
             disabled={isPending || inputAmount <= 0}
-            className="editorial-gradient text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-widest uppercase shadow-md hover:shadow-lg hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
+            className="w-full sm:w-auto editorial-gradient text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-widest uppercase shadow-md hover:shadow-lg hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
           >
             {isPending ? 'Saving...' : 'Confirm Payment'}
           </button>

@@ -21,7 +21,7 @@ export default function Topnav({ title }) {
           <h1 className="text-2xl md:text-[1.75rem] font-headline font-extrabold tracking-tight text-on-surface">
             Hisab<span className="text-primary">Kitab</span>
           </h1>
-          <p className="text-[10px] md:text-[11px] text-on-surface-variant font-bold tracking-[0.18em] uppercase -mt-0.5">
+          <p className="hidden sm:block text-[10px] md:text-[11px] text-on-surface-variant font-bold tracking-[0.18em] uppercase -mt-0.5">
             {title || 'Fee Operations Console'}
           </p>
         </div>

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Topnav from '../components/Topnav';
 import StudentRow from '../components/StudentRow';
 import AddStudentModal from '../components/AddStudentModal';
+import RecordPaymentModal from '../components/RecordPaymentModal';
 import { useStudentsByStandard } from '../hooks/useStudents';
 import { useStandard } from '../hooks/useStandards';
 
@@ -22,9 +23,11 @@ const formatInr = (value) => `Rs ${Number(value || 0).toLocaleString('en-IN')}`;
 
 export default function StandardDetailPage() {
   const { standardId } = useParams();
+  const navigate = useNavigate();
   const { data: standard, isLoading: isStandardLoading } = useStandard(standardId);
   const { data: students, isLoading: isStudentsLoading } = useStudentsByStandard(standardId);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedPaymentStudent, setSelectedPaymentStudent] = useState(null);
 
   if (isStandardLoading || isStudentsLoading) {
     return <div className="p-8">Loading class details...</div>;
@@ -60,10 +63,7 @@ export default function StandardDetailPage() {
               <div className="mb-3">
                 <span className="std-chip">{getStdChipLabel(standard)}</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-headline font-extrabold tracking-tight text-on-surface">
-                {standard?.name}
-              </h2>
-              <p className="text-sm text-on-surface-variant font-semibold mt-2">
+              <p className="text-sm text-on-surface-variant font-semibold mt-1">
                 {students?.length || 0} students actively tracked in this standard.
               </p>
             </div>
@@ -79,7 +79,7 @@ export default function StandardDetailPage() {
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
-          <div className="lg:col-span-3 elevated-card p-8 rounded-3xl">
+          <div className="lg:col-span-3 elevated-card p-5 sm:p-8 rounded-3xl">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-headline text-on-surface font-bold">Student Records</h3>
               <div className="text-xs font-extrabold tracking-[0.14em] text-on-surface-variant bg-surface-container-low px-4 py-2 rounded-xl uppercase">
@@ -87,7 +87,56 @@ export default function StandardDetailPage() {
               </div>
             </div>
 
-            <div className="overflow-x-auto -mx-6 sm:mx-0 px-6 sm:px-0 pb-4">
+            <div className="md:hidden space-y-3">
+              {students?.map((student) => {
+                const remainingAmount = Math.max(0, Number(student.total_fees) - Number(student.paid_amount));
+
+                return (
+                  <div key={student.id} className="rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <button
+                        onClick={() => navigate(`/student/${student.id}`)}
+                        className="flex items-center gap-3 min-w-0"
+                      >
+                        <div className="w-9 h-9 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
+                          {student.full_name.charAt(0)}
+                        </div>
+                        <span className="font-semibold text-on-surface truncate">{student.full_name}</span>
+                      </button>
+                      <button
+                        onClick={() => setSelectedPaymentStudent(student)}
+                        className="action-pill bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all active:scale-95 shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">add_card</span>
+                        Record Fees
+                      </button>
+                    </div>
+
+                    <div className="mt-4 space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-on-surface-variant font-semibold">Remaining</span>
+                        <span className={`font-semibold ${remainingAmount > 0 ? 'text-error' : 'text-primary'}`}>{formatInr(remainingAmount)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-on-surface-variant font-semibold">Paid</span>
+                        <span className="font-semibold text-on-surface">{formatInr(student.paid_amount)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-on-surface-variant font-semibold">Total Fee</span>
+                        <span className="font-semibold text-on-surface">{formatInr(student.total_fees)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {students?.length === 0 && (
+                <div className="py-8 text-center text-on-surface-variant">
+                  No students added yet.
+                </div>
+              )}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto -mx-6 sm:mx-0 px-6 sm:px-0 pb-4">
               <table className="w-full text-left border-collapse min-w-[920px] whitespace-nowrap">
                 <thead>
                   <tr>
@@ -95,16 +144,16 @@ export default function StandardDetailPage() {
                       Student Name
                     </th>
                     <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
-                      Total Fee
+                      Action
+                    </th>
+                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
+                      Remaining
                     </th>
                     <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
                       Paid
                     </th>
                     <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">
-                      Remaining
-                    </th>
-                    <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant text-right border-b border-outline-variant/60">
-                      Action
+                      Total Fee
                     </th>
                   </tr>
                 </thead>
@@ -142,7 +191,7 @@ export default function StandardDetailPage() {
               </div>
             </div>
 
-            <div className="elevated-card p-8 rounded-3xl">
+            <div className="elevated-card p-5 sm:p-8 rounded-3xl">
               <h4 className="text-sm font-headline text-on-surface mb-6 flex items-center gap-2 font-bold">
                 <span className="material-symbols-outlined text-primary text-base">analytics</span>
                 Stats
@@ -166,6 +215,13 @@ export default function StandardDetailPage() {
         <AddStudentModal
           standardId={standardId}
           onClose={() => setIsAddModalOpen(false)}
+        />
+      )}
+
+      {selectedPaymentStudent && (
+        <RecordPaymentModal
+          student={selectedPaymentStudent}
+          onClose={() => setSelectedPaymentStudent(null)}
         />
       )}
     </div>

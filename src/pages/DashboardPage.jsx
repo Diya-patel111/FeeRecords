@@ -54,36 +54,17 @@ export default function DashboardPage() {
       <Topnav title="Collections Dashboard" />
 
       <main className="flex-grow p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto w-full">
-        <section className="elevated-card rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-16 -right-16 w-52 h-52 rounded-full bg-primary/10 blur-3xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-primary/10 blur-3xl"></div>
+        {activeTab === 'standards' && (
+          <div className="mb-8 flex justify-end">
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="fixed bottom-6 right-6 sm:static sm:bottom-auto sm:right-auto z-50 flex items-center justify-center gap-2 px-6 py-4 sm:py-3 editorial-gradient text-white rounded-full sm:rounded-2xl font-bold text-sm tracking-[0.16em] uppercase shadow-lg hover:shadow-xl hover:opacity-90 active:scale-95 transition-all"
+            >
+              <span className="material-symbols-outlined text-2xl sm:text-lg">add</span>
+              <span className="hidden sm:inline">Add Class</span>
+            </button>
           </div>
-
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] font-bold text-primary/80 mb-2">
-                Fee Intelligence
-              </p>
-              <h2 className="text-3xl lg:text-4xl font-headline font-extrabold tracking-tight text-on-surface">
-                Precision Fee Operations
-              </h2>
-              <p className="text-on-surface-variant text-sm mt-2 max-w-2xl">
-                Track standards, monitor collections, and record dues in one clean workflow.
-              </p>
-            </div>
-
-            {activeTab === 'standards' && (
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="fixed bottom-6 right-6 sm:static sm:bottom-auto sm:right-auto z-50 flex items-center justify-center gap-2 px-6 py-4 sm:py-3 editorial-gradient text-white rounded-full sm:rounded-2xl font-bold text-sm tracking-[0.16em] uppercase shadow-lg hover:shadow-xl hover:opacity-90 active:scale-95 transition-all"
-              >
-                <span className="material-symbols-outlined text-2xl sm:text-lg">add</span>
-                <span className="hidden sm:inline">Add Class</span>
-              </button>
-            )}
-          </div>
-        </section>
+        )}
 
         <div className="frost-panel p-1.5 rounded-2xl mb-8 overflow-x-auto no-scrollbar gap-1 w-full max-w-sm flex">
           <button
@@ -123,10 +104,7 @@ export default function DashboardPage() {
                 <div className="relative z-10 flex justify-between items-start mb-7">
                   <div>
                     <span className="std-chip">{getStdChipLabel(std)}</span>
-                    <h3 className="text-2xl font-headline font-extrabold text-on-surface mt-4 tracking-tight group-hover:text-primary transition-colors">
-                      {std.name}
-                    </h3>
-                    <p className="text-sm font-semibold text-on-surface-variant mt-1">
+                    <p className="text-sm font-semibold text-on-surface-variant mt-4">
                       {std.count} Students Enrolled
                     </p>
                   </div>
@@ -192,7 +170,7 @@ export default function DashboardPage() {
         )}
 
         {activeTab === 'students' && (
-          <div className="elevated-card p-8 rounded-3xl relative z-10 w-full overflow-hidden">
+          <div className="elevated-card p-5 sm:p-8 rounded-3xl relative z-10 w-full overflow-hidden">
             <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
               <h2 className="text-xl font-headline font-semibold text-on-surface whitespace-nowrap">Student Records</h2>
               <div className="relative w-full sm:w-auto">
@@ -218,84 +196,148 @@ export default function DashboardPage() {
             {isLoadingStudents ? (
               <div className="py-8 text-center text-on-surface-variant font-medium">Loading students...</div>
             ) : (
-              <div className="overflow-x-auto -mx-6 sm:mx-0 px-6 sm:px-0 pb-4">
-                <table className="w-full text-left border-collapse min-w-[920px] whitespace-nowrap">
-                  <thead>
-                    <tr>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Student Name</th>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Class</th>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Total Fee</th>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Paid</th>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Remaining</th>
-                      <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredStudents?.map((student) => {
-                      const standard = standardsMap.get(student.standard_id) || { name: student.standards?.name };
-                      const remainingAmount = Math.max(0, Number(student.total_fees) - Number(student.paid_amount));
+              <>
+                <div className="md:hidden space-y-3">
+                  {filteredStudents?.map((student) => {
+                    const standard = standardsMap.get(student.standard_id) || { name: student.standards?.name };
+                    const remainingAmount = Math.max(0, Number(student.total_fees) - Number(student.paid_amount));
 
-                      return (
-                        <tr
-                          key={student.id}
-                          className="group cursor-pointer"
-                          onClick={() => navigate(`/student/${student.id}`)}
-                        >
-                          <td className="py-4 px-4 first:rounded-l-2xl bg-surface-container-lowest group-hover:bg-white border-b border-outline-variant/60 transition-colors">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase">
-                                {student.full_name.charAt(0)}
-                              </div>
-                              <span className="font-semibold text-on-surface">{student.full_name}</span>
+                    return (
+                      <div key={student.id} className="rounded-2xl border border-outline-variant/60 bg-surface-container-lowest p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <button
+                            onClick={() => navigate(`/student/${student.id}`)}
+                            className="flex items-center gap-3 min-w-0"
+                          >
+                            <div className="w-9 h-9 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0">
+                              {student.full_name.charAt(0)}
                             </div>
-                          </td>
-                          <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
-                            <span className="std-chip !text-[10px] !tracking-[0.09em] !px-3 !py-1 shadow-none">
-                              {getStdChipLabel(standard)}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface font-semibold border-b border-outline-variant/60 transition-colors">
-                            {formatInr(student.total_fees)}
-                          </td>
-                          <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
-                            {formatInr(student.paid_amount)}
-                          </td>
-                          <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+                            <span className="font-semibold text-on-surface truncate">{student.full_name}</span>
+                          </button>
+                          <button
+                            onClick={() => setSelectedPaymentStudent(student)}
+                            className="action-pill bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all active:scale-95 shrink-0"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">add_card</span>
+                            Record Fees
+                          </button>
+                        </div>
+
+                        <div className="mt-4 space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-on-surface-variant font-semibold">Remaining</span>
                             <span className={`font-semibold ${remainingAmount > 0 ? 'text-error' : 'text-primary'}`}>
                               {formatInr(remainingAmount)}
                             </span>
-                          </td>
-                          <td className="py-4 px-4 last:rounded-r-2xl bg-surface-container-lowest group-hover:bg-white border-b border-outline-variant/60 text-right transition-colors">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedPaymentStudent(student);
-                              }}
-                              className="action-pill bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all active:scale-95"
-                            >
-                              <span className="material-symbols-outlined text-[16px]">add_card</span>
-                              Record Fees
-                            </button>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-on-surface-variant font-semibold">Paid</span>
+                            <span className="font-semibold text-on-surface">{formatInr(student.paid_amount)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-on-surface-variant font-semibold">Total Fee</span>
+                            <span className="font-semibold text-on-surface">{formatInr(student.total_fees)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-on-surface-variant font-semibold">STD</span>
+                            <span className="std-chip !text-[10px] !tracking-[0.09em] !px-3 !py-1 shadow-none">
+                              {getStdChipLabel(standard)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {allStudents?.length === 0 ? (
+                    <div className="py-8 text-center text-on-surface-variant">
+                      No students added yet.
+                    </div>
+                  ) : filteredStudents?.length === 0 ? (
+                    <div className="py-8 text-center text-on-surface-variant">
+                      No students found matching "{searchQuery}".
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="hidden md:block overflow-x-auto -mx-6 sm:mx-0 px-6 sm:px-0 pb-4">
+                  <table className="w-full text-left border-collapse min-w-[920px] whitespace-nowrap">
+                    <thead>
+                      <tr>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Student Name</th>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Action</th>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Remaining</th>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Paid</th>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">Total Fee</th>
+                        <th className="pb-4 px-4 text-xs font-extrabold uppercase tracking-[0.15em] text-on-surface-variant border-b border-outline-variant/60">STD</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredStudents?.map((student) => {
+                        const standard = standardsMap.get(student.standard_id) || { name: student.standards?.name };
+                        const remainingAmount = Math.max(0, Number(student.total_fees) - Number(student.paid_amount));
+
+                        return (
+                          <tr
+                            key={student.id}
+                            className="group cursor-pointer"
+                            onClick={() => navigate(`/student/${student.id}`)}
+                          >
+                            <td className="py-4 px-4 first:rounded-l-2xl bg-surface-container-lowest group-hover:bg-white border-b border-outline-variant/60 transition-colors">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase">
+                                  {student.full_name.charAt(0)}
+                                </div>
+                                <span className="font-semibold text-on-surface">{student.full_name}</span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white border-b border-outline-variant/60 transition-colors">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedPaymentStudent(student);
+                                }}
+                                className="action-pill bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all active:scale-95"
+                              >
+                                <span className="material-symbols-outlined text-[16px]">add_card</span>
+                                Record Fees
+                              </button>
+                            </td>
+                            <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+                              <span className={`font-semibold ${remainingAmount > 0 ? 'text-error' : 'text-primary'}`}>
+                                {formatInr(remainingAmount)}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+                              {formatInr(student.paid_amount)}
+                            </td>
+                            <td className="py-4 px-4 bg-surface-container-lowest group-hover:bg-white text-on-surface font-semibold border-b border-outline-variant/60 transition-colors">
+                              {formatInr(student.total_fees)}
+                            </td>
+                            <td className="py-4 px-4 last:rounded-r-2xl bg-surface-container-lowest group-hover:bg-white text-on-surface border-b border-outline-variant/60 transition-colors">
+                              <span className="std-chip !text-[10px] !tracking-[0.09em] !px-3 !py-1 shadow-none">
+                                {getStdChipLabel(standard)}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {allStudents?.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="py-8 text-center text-on-surface-variant">
+                            No students added yet.
                           </td>
                         </tr>
-                      );
-                    })}
-                    {allStudents?.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="py-8 text-center text-on-surface-variant">
-                          No students added yet.
-                        </td>
-                      </tr>
-                    ) : filteredStudents?.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="py-8 text-center text-on-surface-variant">
-                          No students found matching "{searchQuery}".
-                        </td>
-                      </tr>
-                    ) : null}
-                  </tbody>
-                </table>
-              </div>
+                      ) : filteredStudents?.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="py-8 text-center text-on-surface-variant">
+                            No students found matching "{searchQuery}".
+                          </td>
+                        </tr>
+                      ) : null}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         )}

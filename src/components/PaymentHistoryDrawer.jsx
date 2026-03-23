@@ -18,7 +18,7 @@ export default function PaymentHistoryDrawer({ student, isOpen, onClose }) {
       <section className="relative lg:absolute lg:inset-y-0 lg:right-0 w-full lg:max-w-xl bg-surface shadow-2xl flex flex-col transform transition-transform duration-300 lg:outline lg:outline-1 lg:outline-outline-variant text-on-surface rounded-t-3xl lg:rounded-none max-h-[95vh] lg:max-h-full">
         <header className="px-6 lg:px-8 py-6 lg:py-8 border-b border-outline-variant flex items-center justify-between bg-surface-container/50 rounded-t-3xl lg:rounded-none">
           <div>
-            <h2 className="text-2xl font-headline text-on-surface mb-2">{student?.name}</h2>
+            <h2 className="text-xl sm:text-2xl font-headline text-on-surface mb-2">{student?.full_name || student?.name}</h2>
             <div className="flex items-center gap-3 text-sm text-on-surface-variant font-medium">
               <span>Ledger details</span>
             </div>
@@ -31,8 +31,8 @@ export default function PaymentHistoryDrawer({ student, isOpen, onClose }) {
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="grid grid-cols-2 gap-4 mb-10">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
             <div className="bg-surface-container p-6 rounded-2xl border border-outline-variant">
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Total Paid</p>
               <p className="text-3xl font-headline text-primary">
@@ -86,7 +86,7 @@ export default function PaymentHistoryDrawer({ student, isOpen, onClose }) {
           </div>
         </div>
 
-        <div className="p-8 bg-surface-container border-t border-outline-variant mt-auto">
+        <div className="p-5 sm:p-8 bg-surface-container border-t border-outline-variant mt-auto">
           <button 
             onClick={() => setIsRecordModalOpen(true)}
             disabled={Number(student?.remaining_amount || 0) <= 0}

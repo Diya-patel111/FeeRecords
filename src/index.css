@@ -80,6 +80,14 @@ body {
   text-transform: uppercase;
 }
 
+@media (max-width: 420px) {
+  .action-pill {
+    padding: 0.45rem 0.62rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+}
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

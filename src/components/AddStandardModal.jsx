@@ -84,7 +84,7 @@ export default function AddStandardModal({ isOpen, onClose, onSuccess }) {
             <p className="text-[11px] font-medium text-outline pt-1">Used to sort classes on the dashboard (e.g. 1 appears before 2).</p>
           </div>
 
-          <div className="pt-6 flex gap-4">
+          <div className="pt-6 flex flex-col-reverse sm:flex-row gap-4">
             <button
               type="button"
               onClick={onClose}
