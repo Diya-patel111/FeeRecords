@@ -45,6 +45,8 @@ exports.createStudent = async (req, res) => {
         full_name: full_name,
         standard_id,
         total_fees,
+        teacher_id: req.user.id
+      }])
       .select()
       .single();
 

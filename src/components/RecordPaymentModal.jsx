@@ -24,6 +24,8 @@ export default function RecordPaymentModal({ student, onClose }) {
     }, {
       onSuccess: () => {
         onClose();
+        setAmount('');
+        setNote('');
       }
     });
   };

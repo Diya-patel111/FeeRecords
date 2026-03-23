@@ -26,13 +26,9 @@ export const useAllStudents = () => {
   return useQuery({
     queryKey: ['all_students'],
     queryFn: async () => {
-      // Assuming teacher_id is implicit via RLS or we extract it
       const { data, error } = await supabase
         .from('student_fee_summary')
-        .select(`
-          *,
-          standards (name)
-        `)
+        .select('*')
         .order('full_name');
         
       if (error) throw error;
@@ -46,17 +42,30 @@ export const useStudent = (studentId) => {
   return useQuery({
     queryKey: ['student', studentId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: student, error } = await supabase
         .from('student_fee_summary')
-        .select(`
-          *,
-          standards(name)
-        `)
+        .select('*')
         .eq('id', studentId)
         .single();
         
       if (error) throw error;
-      return data;
+
+      let standardName = null;
+      if (student?.standard_id) {
+        const { data: standard, error: standardError } = await supabase
+          .from('standards')
+          .select('name')
+          .eq('id', student.standard_id)
+          .single();
+
+        if (standardError) throw standardError;
+        standardName = standard?.name ?? null;
+      }
+
+      return {
+        ...student,
+        standards: { name: standardName }
+      };
     },
     enabled: !!studentId
   });
@@ -68,9 +77,16 @@ export const useAddStudent = () => {
 
   return useMutation({
     mutationFn: async (student) => {
+      const payloadToInsert = {
+        standard_id: student?.standard_id ?? null,
+        full_name: (student?.full_name ?? '').trim(),
+        total_fees: Number(student?.total_fees ?? 0),
+        teacher_id: user.id
+      };
+
       const { data, error } = await supabase
         .from('students')
-        .insert([{ ...student, teacher_id: user.id }])
+        .insert([payloadToInsert])
         .select()
         .single();
         

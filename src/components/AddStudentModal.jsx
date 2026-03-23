@@ -10,12 +10,15 @@ export default function AddStudentModal({ standardId, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!fullName || !totalFees) return;
-
     addStudent({
       standard_id: standardId,
-      full_name: fullName,
+      full_name: fullName.trim(),
+      total_fees: parseFloat(totalFees)
+    }, {
       onSuccess: () => {
         onClose();
+        setFullName('');
+        setTotalFees('');
       }
     });
   };

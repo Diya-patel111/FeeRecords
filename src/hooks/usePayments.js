@@ -27,9 +27,17 @@ export const useAddPayment = () => {
 
   return useMutation({
     mutationFn: async (payment) => {
+      const payloadToInsert = {
+        student_id: payment?.student_id ?? null,
+        amount: Number(payment?.amount ?? 0),
+        payment_date: payment?.payment_date,
+        note: payment?.note ?? null,
+        teacher_id: user.id
+      };
+
       const { data, error } = await supabase
         .from('payments')
-        .insert([{ ...payment, teacher_id: user.id }])
+        .insert([payloadToInsert])
         .select()
         .single();
         
