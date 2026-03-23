@@ -70,10 +70,10 @@ export default function StandardDetailPage() {
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="fixed bottom-6 right-6 sm:static sm:bottom-auto sm:right-auto z-50 px-6 py-4 sm:py-3 editorial-gradient text-white font-bold tracking-[0.14em] text-sm uppercase rounded-full sm:rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:opacity-90 transition-all active:scale-95"
+              className="w-full sm:w-auto z-30 px-6 py-3 editorial-gradient text-white font-bold tracking-[0.14em] text-sm uppercase rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:opacity-90 transition-all active:scale-95"
             >
-              <span className="material-symbols-outlined text-2xl sm:text-lg">add</span>
-              <span className="hidden sm:inline">Add Student</span>
+              <span className="material-symbols-outlined text-lg">add</span>
+              <span>Add Student</span>
             </button>
           </div>
         </section>

@@ -9,7 +9,7 @@ export const usePaymentsByStudent = (studentId) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('payments')
-        .select('*')
+        .select('id,student_id,amount,payment_date,note,created_at')
         .eq('student_id', studentId)
         .order('payment_date', { ascending: false })
         .order('created_at', { ascending: false });
@@ -17,7 +17,8 @@ export const usePaymentsByStudent = (studentId) => {
       if (error) throw error;
       return data;
     },
-    enabled: !!studentId
+    enabled: !!studentId,
+    staleTime: 60 * 1000
   });
 };
 
@@ -46,9 +47,11 @@ export const useAddPayment = () => {
     },
     onSuccess: (data) => {
       // Invalidate to refresh student summary and payments
-      queryClient.invalidateQueries(['students']);
-      queryClient.invalidateQueries(['payments', data.student_id]);
-      queryClient.invalidateQueries(['standards_dashboard']);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['all_students'] });
+      queryClient.invalidateQueries({ queryKey: ['student', data.student_id] });
+      queryClient.invalidateQueries({ queryKey: ['payments', data.student_id] });
+      queryClient.invalidateQueries({ queryKey: ['standards_dashboard'] });
       toast.success('Payment recorded successfully!');
     },
     onError: (error) => {

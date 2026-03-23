@@ -3,38 +3,45 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
+const STUDENT_SUMMARY_COLUMNS = 'id,teacher_id,standard_id,full_name,total_fees,paid_amount,remaining_amount';
+
 export const useStudentsByStandard = (standardId) => {
   return useQuery({
     queryKey: ['students', standardId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('student_fee_summary')
-        .select('*')
+        .select(STUDENT_SUMMARY_COLUMNS)
         .eq('standard_id', standardId)
-        .order('full_name');
-        
+        .order('full_name', { ascending: true });
+
       if (error) throw error;
       return data;
     },
-    enabled: !!standardId
+    enabled: !!standardId,
+    staleTime: 60 * 1000
   });
 };
 
 export const useAllStudents = () => {
-  const user = useAuthStore(state => state.user);
-  
+  const user = useAuthStore((state) => state.user);
+
   return useQuery({
-    queryKey: ['all_students'],
+    queryKey: ['all_students', user?.id],
     queryFn: async () => {
+      if (!user?.id) return [];
+
       const { data, error } = await supabase
         .from('student_fee_summary')
-        .select('*')
-        .order('full_name');
-        
+        .select(STUDENT_SUMMARY_COLUMNS)
+        .eq('teacher_id', user.id)
+        .order('full_name', { ascending: true });
+
       if (error) throw error;
       return data;
     },
-    enabled: !!user
+    enabled: !!user?.id,
+    staleTime: 60 * 1000
   });
 };
 
@@ -44,10 +51,10 @@ export const useStudent = (studentId) => {
     queryFn: async () => {
       const { data: student, error } = await supabase
         .from('student_fee_summary')
-        .select('*')
+        .select(STUDENT_SUMMARY_COLUMNS)
         .eq('id', studentId)
         .single();
-        
+
       if (error) throw error;
 
       let standardName = null;
@@ -58,7 +65,7 @@ export const useStudent = (studentId) => {
           .eq('id', student.standard_id)
           .single();
 
-        if (standardError) throw standardError;
+        if (standardError && standardError.code !== 'PGRST116') throw standardError;
         standardName = standard?.name ?? null;
       }
 
@@ -67,13 +74,14 @@ export const useStudent = (studentId) => {
         standards: { name: standardName }
       };
     },
-    enabled: !!studentId
+    enabled: !!studentId,
+    staleTime: 60 * 1000
   });
 };
 
 export const useAddStudent = () => {
   const queryClient = useQueryClient();
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore((state) => state.user);
 
   return useMutation({
     mutationFn: async (student) => {
@@ -89,13 +97,14 @@ export const useAddStudent = () => {
         .insert([payloadToInsert])
         .select()
         .single();
-        
+
       if (error) throw error;
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['students', data.standard_id]);
-      queryClient.invalidateQueries(['standards_dashboard']);
+      queryClient.invalidateQueries({ queryKey: ['students', data.standard_id] });
+      queryClient.invalidateQueries({ queryKey: ['all_students'] });
+      queryClient.invalidateQueries({ queryKey: ['standards_dashboard'] });
       toast.success('Student added successfully!');
     },
     onError: (error) => {

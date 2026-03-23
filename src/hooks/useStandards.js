@@ -11,8 +11,15 @@ export const useStandardsDashboard = () => {
       if (!user) return [];
       
       const [standardsRes, feesRes] = await Promise.all([
-        supabase.from('standards').select('*').eq('teacher_id', user.id).order('display_order'),
-        supabase.from('student_fee_summary').select('*').eq('teacher_id', user.id)
+        supabase
+          .from('standards')
+          .select('id,name,display_order,teacher_id,created_at')
+          .eq('teacher_id', user.id)
+          .order('display_order'),
+        supabase
+          .from('student_fee_summary')
+          .select('id,standard_id,total_fees,paid_amount,remaining_amount')
+          .eq('teacher_id', user.id)
       ]);
 
       if (standardsRes.error) throw standardsRes.error;
@@ -29,7 +36,8 @@ export const useStandardsDashboard = () => {
         return { ...std, count, total, collected, pending, progress };
       });
     },
-    enabled: !!user
+    enabled: !!user,
+    staleTime: 60 * 1000
   });
 };
 
@@ -39,12 +47,13 @@ export const useStandard = (standardId) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('standards')
-        .select('*')
+        .select('id,name,display_order,teacher_id,created_at')
         .eq('id', standardId)
         .single();
       if (error) throw error;
       return data;
     },
-    enabled: !!standardId
+    enabled: !!standardId,
+    staleTime: 60 * 1000
   });
 };

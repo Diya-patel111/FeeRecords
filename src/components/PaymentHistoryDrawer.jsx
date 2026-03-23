@@ -76,8 +76,8 @@ export default function PaymentHistoryDrawer({ student, isOpen, onClose }) {
                         {new Date(payment.payment_date).toLocaleDateString('en-IN')}
                       </div>
                     </div>
-                    {payment.notes && (
-                      <p className="text-sm text-on-surface-variant mt-3 p-3 bg-surface-container rounded-lg italic">"{payment.notes}"</p>
+                    {payment.note && (
+                      <p className="text-sm text-on-surface-variant mt-3 p-3 bg-surface-container rounded-lg italic">"{payment.note}"</p>
                     )}
                   </div>
                 </div>
